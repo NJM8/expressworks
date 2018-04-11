@@ -1,12 +1,21 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const nib = require('nib');
 const stylus = require('stylus');
 const path = require('path');
 const app = express();
 
-// using path.join passing to stylus middleware does not work, not sure how to actully hook this up in production
-app.use(stylus.middleware(process.argv[3]|| path.join(__dirname, 'public')));
-app.use(express.static(process.argv[3] || path.join(__dirname, 'public')));
+function compile(str, path) {
+  return stylus(str)
+  .set('filename', path)
+  .use(nib())
+}
+
+app.use(stylus.middleware({
+  src: __dirname + '/public',
+  compile: compile
+}))
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended:false}));
 
 app.set('view engine', 'pug');
