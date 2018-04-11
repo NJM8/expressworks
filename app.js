@@ -4,6 +4,7 @@ const nib = require('nib');
 const stylus = require('stylus');
 const path = require('path');
 const crypto = require('crypto');
+const fs = require('fs');
 const jsonParser = bodyParser.json();
 const app = express();
 
@@ -30,15 +31,33 @@ app.get('/home', (req, res) => {
 
 app.get('/search', (req, res) => {
   return res.send(req.query);
+});
+
+app.get('/books', (req, res) => {
+  console.log(process.argv[3]);
+  const location = process.argv[3]
+  fs.readFile(location, (err, data) => {
+    if (err) {
+      console.log(err);
+      return res.send(500).status('File error');
+    }
+    try {
+      books = JSON.parse(data);
+    } catch (err) {
+      console.log(err);
+      return res.send(500).status('File error');
+    }
+    return res.json(books)
+  })
 })
 
 app.post('/form', (req, res) => {
   return res.send(req.body.str.split('').reverse().join(''));
-})
+});
 
 app.put('/message/:id', (req, res) => {
   const newHash = crypto.createHash('sha1').update(new Date().toDateString() + req.params.id).digest('hex');
   return res.send(newHash);
-})
+});
 
 app.listen(process.argv[2]);
