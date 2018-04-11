@@ -4,6 +4,7 @@ const nib = require('nib');
 const stylus = require('stylus');
 const path = require('path');
 const crypto = require('crypto');
+const jsonParser = bodyParser.json();
 const app = express();
 
 function compile(str, path) {
@@ -26,6 +27,10 @@ app.set('views', path.join(__dirname, 'templates'));
 app.get('/home', (req, res) => {
   return res.render('index', { date: new Date().toDateString() });
 });
+
+app.get('/search', (req, res) => {
+  return res.send(req.query);
+})
 
 app.post('/form', (req, res) => {
   return res.send(req.body.str.split('').reverse().join(''));
