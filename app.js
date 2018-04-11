@@ -11,7 +11,7 @@ const app = express();
 function compile(str, path) {
   return stylus(str)
   .set('filename', path)
-  .use(nib())
+  .use(nib());
 }
 
 app.use(stylus.middleware({
@@ -47,9 +47,9 @@ app.get('/books', (req, res) => {
       console.log(err);
       return res.send(500).status('File error');
     }
-    return res.json(books)
+    return res.json(books);
   })
-})
+});
 
 app.post('/form', (req, res) => {
   return res.send(req.body.str.split('').reverse().join(''));
